@@ -96,7 +96,7 @@ export const resolveColor = async (source, fetchColor, music = false) => {
     if (source !== getCoverSource(music)) return;
     return music ? applyMusicColor(color) : applyThemeColor(color);
   } catch (error) {
-    console.error("Unable to resolve cover color:", error);
+    console.debug("Cover color provider unavailable; using the theme default.", error);
     if (!music) applyDefaultColor();
   }
 };
