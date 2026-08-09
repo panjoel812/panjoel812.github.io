@@ -4,7 +4,10 @@
     ['.asideSwitch', 'button', '切换侧边栏'],
     ['#consoleKeyboard', 'button', '打开键盘快捷键'],
     ['#consoleMusic', 'button', '播放或暂停音乐'],
-    ['#nav-totop', 'button', '返回顶部'],
+    ['#nav-totop .totopbtn', 'button', '返回顶部'],
+    ['#page-name-text', 'button', '返回顶部'],
+    ['#toggle-menu > a', 'button', '打开导航菜单'],
+    ['.post-reward .reward-button', 'button', '显示赞赏方式'],
     ['#toPageButton', 'button', '跳转到指定页']
   ]
 
@@ -23,8 +26,7 @@
           element.setAttribute('aria-label', (title || articleTitle || fallbackLabel).trim())
         }
 
-        const needsActivationHandler = element.tagName === 'A' && !element.hasAttribute('href')
-        if (!needsActivationHandler || element.dataset.poblumiKeyboardReady === 'true') return
+        if (element.dataset.poblumiKeyboardReady === 'true') return
         element.dataset.poblumiKeyboardReady = 'true'
         element.addEventListener('keydown', event => {
           const activate = event.key === 'Enter' || (role === 'button' && event.key === ' ')
@@ -33,6 +35,74 @@
           element.click()
         })
       })
+    })
+  }
+
+  const prepareMenuToggle = () => {
+    const toggle = document.querySelector('#toggle-menu > a')
+    const menu = document.getElementById('sidebar-menus')
+    if (!toggle || !menu) return
+
+    toggle.setAttribute('aria-controls', 'sidebar-menus')
+    const updateExpandedState = () => {
+      toggle.setAttribute('aria-expanded', String(menu.classList.contains('open')))
+    }
+    updateExpandedState()
+
+    if (toggle.dataset.poblumiMenuStateReady === 'true') return
+    toggle.dataset.poblumiMenuStateReady = 'true'
+    new MutationObserver(updateExpandedState).observe(menu, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+  }
+
+  const prepareRewardDialog = () => {
+    const trigger = document.querySelector('.post-reward .reward-button')
+    const panel = document.querySelector('.post-reward .reward-main')
+    if (!trigger || !panel) return
+
+    panel.id ||= 'poblumi-reward-panel'
+    panel.setAttribute('role', 'dialog')
+    panel.setAttribute('aria-modal', 'true')
+    panel.setAttribute('aria-label', '赞赏作者')
+    trigger.setAttribute('aria-controls', panel.id)
+    trigger.setAttribute('aria-haspopup', 'dialog')
+
+    const updateExpandedState = () => {
+      const isOpen = getComputedStyle(panel).display !== 'none'
+      trigger.setAttribute('aria-expanded', String(isOpen))
+      panel.setAttribute('aria-hidden', String(!isOpen))
+    }
+    updateExpandedState()
+
+    if (trigger.dataset.poblumiRewardStateReady === 'true') return
+    trigger.dataset.poblumiRewardStateReady = 'true'
+    new MutationObserver(updateExpandedState).observe(panel, {
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    })
+  }
+
+  const prepareDismissActions = () => {
+    if (document.body.dataset.poblumiDismissReady === 'true') return
+    document.body.dataset.poblumiDismissReady = 'true'
+
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return
+
+      const menu = document.getElementById('sidebar-menus')
+      if (menu?.classList.contains('open')) {
+        document.getElementById('menu-mask')?.click()
+        document.querySelector('#toggle-menu > a')?.focus()
+        return
+      }
+
+      const rewardPanel = document.querySelector('.post-reward .reward-main')
+      if (rewardPanel && getComputedStyle(rewardPanel).display !== 'none') {
+        document.getElementById('quit-box')?.click()
+        document.querySelector('.post-reward .reward-button')?.focus()
+      }
     })
   }
 
@@ -72,6 +142,9 @@
     requestAnimationFrame(() => requestAnimationFrame(() => {
       applyBrandGreeting()
       makeKeyboardAccessible()
+      prepareMenuToggle()
+      prepareRewardDialog()
+      prepareDismissActions()
       prepareSkipLink()
       prepareOfflineRetry()
     }))
