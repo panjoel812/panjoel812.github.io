@@ -759,6 +759,11 @@ html.pan-nav-menu-hover .custom-tooltip {
   color: var(--pan-muted);
 }
 
+#post .post-reward .post-qr-code-img[src="/img/poblumi-pack/sponsor-badge.webp"] {
+  image-rendering: auto;
+  object-fit: cover;
+}
+
 /* Sidebar and auxiliary cards */
 #aside-content .card-widget {
   background: var(--efu-card-bg);
@@ -2177,14 +2182,32 @@ html.pan-nav-menu-hover .custom-tooltip {
 
   #category-bar a,
   #sidebar-menus .back-menu-item,
-  #sidebar-menus .card-tag-cloud a {
-    min-height: 44px;
+  #sidebar-menus .card-tag-cloud a,
+  #sidebar-menus .site-data .data-item-link a,
+  #sidebar-menus .menu-child,
+  #sidebar-menus .menus_item > .site-page,
+  #home_center .home-center-title-link {
+    min-height: 44px !important;
   }
 
   #sidebar-menus .back-menu-item,
-  #sidebar-menus .card-tag-cloud a {
+  #sidebar-menus .card-tag-cloud a,
+  #sidebar-menus .site-data .data-item-link a,
+  #sidebar-menus .menu-child,
+  #sidebar-menus .menus_item > .site-page,
+  #home_center .home-center-title-link {
     display: inline-flex;
     align-items: center;
+    touch-action: manipulation;
+  }
+
+  #sidebar-menus .site-data .data-item-link a {
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  #sidebar-menus .menus_item > .site-page {
+    width: 100%;
   }
 
   #page-header #menus > .menus_items {
