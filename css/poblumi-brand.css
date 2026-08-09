@@ -505,3 +505,21 @@
 [data-theme="dark"] .poblumi-action p {
   color: #a9b7c8;
 }
+/* Accessible structure and keyboard focus without changing the visual layout. */
+.poblumi-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.poblumi-keyboard-target:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--efu-main) 82%, white) !important;
+  outline-offset: 3px !important;
+  border-radius: 8px;
+}

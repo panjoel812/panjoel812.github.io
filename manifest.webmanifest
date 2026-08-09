@@ -7,8 +7,10 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#f7f9fe",
   "theme_color": "#007aff",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "/img/pwa/poblumi-logo-192.png",
@@ -21,6 +23,26 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "文库",
+      "short_name": "文库",
+      "description": "浏览全部文章",
+      "url": "/archives/"
+    },
+    {
+      "name": "音乐馆",
+      "short_name": "音乐",
+      "description": "打开啵露米的音乐馆",
+      "url": "/music/"
+    },
+    {
+      "name": "关于啵露米",
+      "short_name": "关于",
+      "description": "认识 Poblumi · 啵露米",
+      "url": "/about/"
     }
   ]
 }
