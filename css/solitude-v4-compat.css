@@ -1,3 +1,3 @@
-/* build time:Sun Aug 09 2026 14:46:15 GMT+0000 (Coordinated Universal Time)*/
+/* build time:Sun Aug 09 2026 15:50:51 GMT+0000 (Coordinated Universal Time)*/
 .note{--note-color:#777;--note-background:color-mix(in srgb, var(--note-color) 12%, transparent);margin:.75rem 0;padding:.85rem 1rem;border-left:4px solid var(--note-color);border-radius:6px;background:var(--note-background)}.note.info{--note-color:#428bca}.note.danger{--note-color:#d9534f}.note.primary{--note-color:#6f42c1}.note.warning{--note-color:#f0ad4e}.note.success{--note-color:#5cb85c}.note>:first-child{margin-top:0!important}.note>:last-child{margin-bottom:0!important}
 /* rebuild by neat */
