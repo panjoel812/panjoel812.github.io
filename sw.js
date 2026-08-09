@@ -1,18 +1,19 @@
 const CACHE_PREFIX = 'poblumi-shell-'
-const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-2`
+const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-4`
 const APP_SHELL = [
   '/',
   '/about/',
+  '/offline/',
   '/404.html',
   '/manifest.webmanifest',
   '/css/index.css?v=4.0.0',
   '/css/solitude-v4-compat.css',
-  '/css/poblumi-brand.css?v=10',
+  '/css/poblumi-brand.css?v=11',
   '/css/apple-liquid-glass.css?v=35',
   '/js/utils.js?v=4.0.0',
   '/js/main.js?v=4.0.0',
   '/js/solitude-v4-actions.js',
-  '/js/poblumi-brand.js?v=3',
+  '/js/poblumi-brand.js?v=5',
   '/img/pwa/poblumi-logo-192.png',
   '/img/poblumi-pack/blog-badge.webp',
   '/img/poblumi-pack/cover-character.webp'
@@ -49,10 +50,12 @@ const networkFirstPage = request => fetch(request)
   .then(response => cacheResponse(request, response))
   .catch(async () => {
     const exact = await caches.match(request, { ignoreSearch: true })
-    return exact || caches.match('/')
+    return exact || caches.match('/offline/')
   })
 
-const staleWhileRevalidate = request => caches.match(request, { ignoreSearch: true })
+// Static assets use versioned query strings. Match the exact request so a new
+// `?v=` value cannot be shadowed by an older cached stylesheet or script.
+const staleWhileRevalidate = request => caches.match(request)
   .then(cached => {
     const network = fetch(request)
       .then(response => cacheResponse(request, response))

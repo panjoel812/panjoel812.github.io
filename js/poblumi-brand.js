@@ -36,6 +36,30 @@
     })
   }
 
+  const prepareOfflineRetry = () => {
+    const retry = document.getElementById('poblumi-offline-retry')
+    if (!retry || retry.dataset.poblumiReady === 'true') return
+
+    retry.dataset.poblumiReady = 'true'
+    retry.addEventListener('click', () => window.location.reload())
+  }
+
+  const prepareSkipLink = () => {
+    const link = document.querySelector('.poblumi-skip-link')
+    if (!link || link.dataset.poblumiReady === 'true') return
+
+    link.dataset.poblumiReady = 'true'
+    link.addEventListener('click', event => {
+      const target = document.querySelector(link.hash)
+      if (!target) return
+
+      event.preventDefault()
+      target.focus({ preventScroll: true })
+      target.scrollIntoView({ block: 'start' })
+      window.history.replaceState(null, '', link.hash)
+    })
+  }
+
   const applyBrandGreeting = () => {
     const greeting = document.getElementById('sayhi')
     if (!greeting) return
@@ -48,6 +72,8 @@
     requestAnimationFrame(() => requestAnimationFrame(() => {
       applyBrandGreeting()
       makeKeyboardAccessible()
+      prepareSkipLink()
+      prepareOfflineRetry()
     }))
   }
 
