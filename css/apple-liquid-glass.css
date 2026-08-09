@@ -1551,6 +1551,126 @@ html.pan-nav-menu-hover .custom-tooltip {
   border-radius: var(--pan-radius-lg) !important;
 }
 
+/* Dialogs keep a visible way out and preserve pointer access to their content. */
+#sidebar-menus {
+  overflow-y: auto;
+}
+
+.poblumi-dialog-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 6px 8px 0 18px;
+  background: var(--efu-card-bg);
+}
+
+.poblumi-dialog-title {
+  color: var(--efu-fontcolor);
+  font-size: .9375rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+
+.poblumi-dialog-close {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 44px;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--efu-fontcolor);
+  background: var(--pan-glass-subtle);
+  border: 1px solid var(--pan-glass-border);
+  border-radius: 999px;
+  box-shadow: var(--pan-inner-highlight);
+  cursor: pointer;
+  appearance: none;
+  touch-action: manipulation;
+  transition: background-color 160ms ease, transform 100ms ease;
+}
+
+.poblumi-dialog-close > span,
+.poblumi-dialog-close > span::before,
+.poblumi-dialog-close > span::after {
+  display: block;
+}
+
+.poblumi-dialog-close > span {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.poblumi-dialog-close > span::before,
+.poblumi-dialog-close > span::after {
+  position: absolute;
+  top: 7px;
+  left: 1px;
+  width: 14px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentcolor;
+  content: "";
+}
+
+.poblumi-dialog-close > span::before {
+  transform: rotate(45deg);
+}
+
+.poblumi-dialog-close > span::after {
+  transform: rotate(-45deg);
+}
+
+.poblumi-dialog-close:hover {
+  background: var(--efu-card-bg);
+}
+
+.poblumi-dialog-close:active {
+  transform: scale(.94);
+}
+
+.poblumi-dialog-close:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--efu-theme) 54%, transparent);
+  outline-offset: 2px;
+}
+
+#post .post-tools .post-tools-left #quit-box {
+  inset: 0;
+  z-index: 1001;
+  width: 100dvw;
+  height: 100dvh;
+  opacity: 1;
+  background: rgb(15 23 42 / 18%);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+#post .post-reward .reward-main {
+  z-index: 1002;
+}
+
+#post .post-reward .reward-main > .poblumi-dialog-close {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  z-index: 2;
+}
+
+#post .post-tools .post-tools-left .post-reward .reward-main .reward-all {
+  padding-top: 3.75rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #post .post-reward:hover > .reward-main:not([data-poblumi-explicit-open="true"]) {
+    display: none;
+  }
+}
+
 #rightside .rs_show,
 #rightside .rs_hide {
   background-color: var(--pan-glass-strong);
@@ -2403,6 +2523,12 @@ html.pan-nav-menu-hover .custom-tooltip {
   :where(#blog_name, #nav-right, .home-center-content, .recent-post-item, #aside-content .card-widget, #post, #archive, #category, #tag, #rightMenu, #console .console-card, #sidebar-menus, #twikoo .tk-comments-container > .tk-comment) {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
+  }
+
+  #post .post-tools .post-tools-left #quit-box {
+    background: rgb(15 23 42 / 32%);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 

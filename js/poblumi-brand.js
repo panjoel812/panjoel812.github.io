@@ -33,6 +33,24 @@
     }
   }
 
+  const createCloseButton = (container, label, onClose) => {
+    let button = container.querySelector(':scope > .poblumi-dialog-close')
+    if (!button) {
+      button = document.createElement('button')
+      button.type = 'button'
+      button.className = 'poblumi-dialog-close'
+      button.innerHTML = '<span aria-hidden="true"></span>'
+      container.append(button)
+    }
+
+    button.setAttribute('aria-label', label)
+    if (button.dataset.poblumiCloseReady !== 'true') {
+      button.dataset.poblumiCloseReady = 'true'
+      button.addEventListener('click', onClose)
+    }
+    return button
+  }
+
   const keyboardTargets = [
     ['.darkmode_switchbutton', 'button', '切换显示模式'],
     ['.asideSwitch', 'button', '切换侧边栏'],
@@ -82,11 +100,30 @@
     menu.setAttribute('aria-modal', 'true')
     menu.setAttribute('aria-label', '移动导航')
     menu.setAttribute('tabindex', '-1')
+
+    let toolbar = menu.querySelector(':scope > .poblumi-dialog-toolbar')
+    if (!toolbar) {
+      toolbar = document.createElement('div')
+      toolbar.className = 'poblumi-dialog-toolbar'
+      const title = document.createElement('span')
+      title.className = 'poblumi-dialog-title'
+      title.textContent = '导航'
+      toolbar.append(title)
+      menu.prepend(toolbar)
+    }
+    createCloseButton(toolbar, '关闭导航菜单', () => {
+      document.getElementById('menu-mask')?.click()
+      toggle.focus({ preventScroll: true })
+    })
+
     let wasOpen = menu.classList.contains('open')
     const updateExpandedState = () => {
       const isOpen = menu.classList.contains('open')
       toggle.setAttribute('aria-expanded', String(isOpen))
+      toggle.setAttribute('aria-label', isOpen ? '关闭导航菜单' : '打开导航菜单')
       menu.setAttribute('aria-hidden', String(!isOpen))
+
+      if (isOpen) menu.removeAttribute('inert')
 
       if (isOpen && !wasOpen) {
         requestAnimationFrame(() => {
@@ -96,6 +133,7 @@
       } else if (!isOpen && wasOpen && menu.contains(document.activeElement)) {
         toggle.focus({ preventScroll: true })
       }
+      if (!isOpen) menu.setAttribute('inert', '')
       wasOpen = isOpen
     }
     updateExpandedState()
@@ -122,11 +160,19 @@
     trigger.setAttribute('aria-controls', panel.id)
     trigger.setAttribute('aria-haspopup', 'dialog')
 
+    const closeButton = createCloseButton(panel, '关闭赞赏', () => {
+      document.getElementById('quit-box')?.click()
+      trigger.focus({ preventScroll: true })
+    })
+    panel.prepend(closeButton)
+
     let wasOpen = getComputedStyle(panel).display !== 'none'
     const updateExpandedState = () => {
       const isOpen = getComputedStyle(panel).display !== 'none'
       trigger.setAttribute('aria-expanded', String(isOpen))
       panel.setAttribute('aria-hidden', String(!isOpen))
+
+      if (isOpen) panel.removeAttribute('inert')
 
       if (isOpen && !wasOpen) {
         requestAnimationFrame(() => {
@@ -136,12 +182,17 @@
       } else if (!isOpen && wasOpen && panel.contains(document.activeElement)) {
         trigger.focus({ preventScroll: true })
       }
+      if (!isOpen) delete panel.dataset.poblumiExplicitOpen
+      if (!isOpen) panel.setAttribute('inert', '')
       wasOpen = isOpen
     }
     updateExpandedState()
 
     if (trigger.dataset.poblumiRewardStateReady === 'true') return
     trigger.dataset.poblumiRewardStateReady = 'true'
+    trigger.addEventListener('click', () => {
+      panel.dataset.poblumiExplicitOpen = 'true'
+    }, true)
     panel.addEventListener('keydown', event => containTabFocus(event, panel))
     new MutationObserver(updateExpandedState).observe(panel, {
       attributes: true,
