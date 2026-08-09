@@ -51,6 +51,22 @@
     return button
   }
 
+  const setDesktopMenuState = (item, isOpen) => {
+    const trigger = item.querySelector(':scope > .site-page')
+    const child = item.querySelector(':scope > .menus_item_child')
+    if (!trigger || !child) return
+
+    item.classList.toggle('open', isOpen)
+    trigger.setAttribute('aria-expanded', String(isOpen))
+    child.setAttribute('aria-hidden', String(!isOpen))
+    if (isOpen) {
+      child.removeAttribute('inert')
+    } else {
+      child.setAttribute('inert', '')
+      delete item.dataset.poblumiClickOpen
+    }
+  }
+
   const keyboardTargets = [
     ['.darkmode_switchbutton', 'button', '切换显示模式'],
     ['.asideSwitch', 'button', '切换侧边栏'],
@@ -87,6 +103,165 @@
           element.click()
         })
       })
+    })
+  }
+
+  const prepareDesktopNavMenus = () => {
+    const items = [...document.querySelectorAll('#page-header #menus > .menus_items > .menus_item')]
+      .filter(item => item.querySelector(':scope > .menus_item_child'))
+
+    items.forEach((item, index) => {
+      const trigger = item.querySelector(':scope > .site-page')
+      const child = item.querySelector(':scope > .menus_item_child')
+      if (!trigger || !child) return
+
+      child.id ||= `poblumi-desktop-menu-${index + 1}`
+      trigger.setAttribute('role', 'button')
+      trigger.setAttribute('aria-haspopup', 'true')
+      trigger.setAttribute('aria-controls', child.id)
+      setDesktopMenuState(item, false)
+
+      if (item.dataset.poblumiDesktopMenuReady === 'true') return
+      item.dataset.poblumiDesktopMenuReady = 'true'
+
+      item.addEventListener('mouseenter', () => {
+        delete item.dataset.poblumiSuppressFocusOpen
+        setDesktopMenuState(item, true)
+      })
+      item.addEventListener('mouseleave', () => {
+        if (!item.contains(document.activeElement)) setDesktopMenuState(item, false)
+      })
+      item.addEventListener('focusin', () => {
+        if (item.dataset.poblumiSuppressFocusOpen !== 'true') setDesktopMenuState(item, true)
+      })
+      item.addEventListener('focusout', () => requestAnimationFrame(() => {
+        if (!item.contains(document.activeElement) && !item.matches(':hover')) {
+          delete item.dataset.poblumiSuppressFocusOpen
+          setDesktopMenuState(item, false)
+        }
+      }))
+      trigger.addEventListener('click', event => {
+        event.preventDefault()
+        delete item.dataset.poblumiSuppressFocusOpen
+        const shouldClose = item.dataset.poblumiClickOpen === 'true' && item.classList.contains('open')
+        if (shouldClose) {
+          setDesktopMenuState(item, false)
+        } else {
+          setDesktopMenuState(item, true)
+          item.dataset.poblumiClickOpen = 'true'
+        }
+      })
+      trigger.addEventListener('keydown', event => {
+        if (event.key === ' ') {
+          event.preventDefault()
+          trigger.click()
+        } else if (event.key === 'ArrowDown') {
+          event.preventDefault()
+          delete item.dataset.poblumiSuppressFocusOpen
+          setDesktopMenuState(item, true)
+          getFocusableElements(child)[0]?.focus()
+        } else if (event.key === 'Escape') {
+          event.preventDefault()
+          item.dataset.poblumiSuppressFocusOpen = 'true'
+          setDesktopMenuState(item, false)
+          trigger.focus({ preventScroll: true })
+        }
+      })
+      child.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return
+        event.preventDefault()
+        item.dataset.poblumiSuppressFocusOpen = 'true'
+        setDesktopMenuState(item, false)
+        trigger.focus({ preventScroll: true })
+      })
+    })
+
+    if (document.body.dataset.poblumiDesktopMenusReady === 'true') return
+    document.body.dataset.poblumiDesktopMenusReady = 'true'
+    document.addEventListener('click', event => {
+      document.querySelectorAll('#page-header #menus > .menus_items > .menus_item.open').forEach(item => {
+        if (!item.contains(event.target)) setDesktopMenuState(item, false)
+      })
+    })
+  }
+
+  const prepareKeyboardShortcutGuard = () => {
+    if (document.body.dataset.poblumiShortcutGuardReady === 'true') return
+    document.body.dataset.poblumiShortcutGuardReady = 'true'
+
+    document.addEventListener('keydown', event => {
+      if (!(event.target instanceof Element)) return
+      const editable = event.target.closest(
+        'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'
+      )
+      if (editable) event.stopPropagation()
+    })
+  }
+
+  const prepareConsoleDialog = () => {
+    const trigger = document.querySelector('#nav-console .console_switchbutton')
+    const root = document.getElementById('console')
+    const content = root?.querySelector('.console-content')
+    if (!trigger || !root || !content) return
+
+    content.id ||= 'poblumi-console-dialog'
+    content.setAttribute('role', 'dialog')
+    content.setAttribute('aria-modal', 'true')
+    content.setAttribute('aria-label', '中控台')
+    content.setAttribute('tabindex', '-1')
+    trigger.setAttribute('role', 'button')
+    trigger.setAttribute('aria-controls', content.id)
+    trigger.setAttribute('aria-haspopup', 'dialog')
+
+    let wasOpen = root.classList.contains('show')
+    const updateConsoleState = () => {
+      const isOpen = root.classList.contains('show')
+      trigger.setAttribute('aria-expanded', String(isOpen))
+      trigger.setAttribute('aria-label', isOpen ? '关闭中控台' : '打开中控台')
+      root.setAttribute('aria-hidden', String(!isOpen))
+
+      if (isOpen) root.removeAttribute('inert')
+      if (isOpen && !wasOpen) {
+        requestAnimationFrame(() => content.focus({ preventScroll: true }))
+      } else if (!isOpen && wasOpen) {
+        trigger.focus({ preventScroll: true })
+      }
+      if (!isOpen) root.setAttribute('inert', '')
+      wasOpen = isOpen
+    }
+    updateConsoleState()
+
+    if (trigger.dataset.poblumiConsoleReady === 'true') return
+    trigger.dataset.poblumiConsoleReady = 'true'
+    trigger.addEventListener('keydown', event => {
+      if (event.key !== ' ') return
+      event.preventDefault()
+      trigger.click()
+    })
+    document.addEventListener('keydown', event => {
+      if (!root.classList.contains('show') || event.key !== 'Tab') return
+
+      const inside = getFocusableElements(root)
+      const first = inside[0] || content
+      const last = inside.at(-1) || content
+      const active = document.activeElement
+      if (active === content || (active !== trigger && !root.contains(active))) {
+        event.preventDefault()
+        ;(event.shiftKey ? trigger : first).focus()
+      } else if (active === trigger) {
+        event.preventDefault()
+        ;(event.shiftKey ? last : first).focus()
+      } else if (event.shiftKey && active === first) {
+        event.preventDefault()
+        trigger.focus()
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault()
+        trigger.focus()
+      }
+    })
+    new MutationObserver(updateConsoleState).observe(root, {
+      attributes: true,
+      attributeFilter: ['class']
     })
   }
 
@@ -214,6 +389,13 @@
         return
       }
 
+      const consoleRoot = document.getElementById('console')
+      if (consoleRoot?.classList.contains('show')) {
+        window.Solitude?.hideConsole?.()
+        document.querySelector('#nav-console .console_switchbutton')?.focus()
+        return
+      }
+
       const rewardPanel = document.querySelector('.post-reward .reward-main')
       if (rewardPanel && getComputedStyle(rewardPanel).display !== 'none') {
         document.getElementById('quit-box')?.click()
@@ -258,6 +440,9 @@
     requestAnimationFrame(() => requestAnimationFrame(() => {
       applyBrandGreeting()
       makeKeyboardAccessible()
+      prepareDesktopNavMenus()
+      prepareKeyboardShortcutGuard()
+      prepareConsoleDialog()
       prepareMenuToggle()
       prepareRewardDialog()
       prepareDismissActions()

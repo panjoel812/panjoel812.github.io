@@ -471,6 +471,19 @@ html:has(#home_center) #page-header #nav {
   transform: translateY(0) scale(1);
 }
 
+#page-header #menus > .menus_items > .menus_item.open > .menus_item_child {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+#page-header #menus > .menus_items > .menus_item:focus-within > .site-page,
+#page-header #menus > .menus_items > .menus_item.open > .site-page {
+  color: var(--efu-white) !important;
+  background: var(--pan-nav-hover) !important;
+}
+
 #page-header #menus > .menus_items > .menus_item > .menus_item_child li .site-page {
   display: flex;
   min-height: 42px;
@@ -1549,6 +1562,10 @@ html.pan-nav-menu-hover .custom-tooltip {
 #sidebar-menus {
   background-color: var(--pan-glass-strong) !important;
   border-radius: var(--pan-radius-lg) !important;
+}
+
+#console .console-content:focus {
+  outline: 0;
 }
 
 /* Dialogs keep a visible way out and preserve pointer access to their content. */
