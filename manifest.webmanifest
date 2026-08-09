@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Poblumi · 啵露米",
+  "short_name": "Poblumi",
+  "description": "啵露米的知识博客：数学、计算机科学与技术实践。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f9fe",
+  "theme_color": "#007aff",
+  "icons": [
+    {
+      "src": "/img/pwa/poblumi-logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/poblumi-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

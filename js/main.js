@@ -515,11 +515,7 @@ Solitude.initThemeColor = initThemeColor;
 
 function applyThemeColor(color) {
   const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-  const appleMobileWebAppMeta = document.querySelector(
-    'meta[name="apple-mobile-web-app-status-bar-style"]'
-  );
   themeColorMeta?.setAttribute("content", color);
-  appleMobileWebAppMeta?.setAttribute("content", color);
   if (window.matchMedia("(display-mode: standalone)").matches) {
     document.body.style.backgroundColor = color;
   }
