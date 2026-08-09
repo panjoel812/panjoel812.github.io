@@ -2144,6 +2144,49 @@ html.pan-nav-menu-hover .custom-tooltip {
     min-height: 44px;
   }
 
+  .home-center-indicators {
+    gap: 0;
+  }
+
+  .home-center-indicator,
+  .home-center-indicator.active {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .home-center-indicator::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 44%);
+    content: "";
+    transform: translate(-50%, -50%);
+    transition: width 180ms ease, background-color 180ms ease;
+  }
+
+  .home-center-indicator.active::before {
+    width: 20px;
+    background: rgb(255 255 255 / 92%);
+  }
+
+  #category-bar a,
+  #sidebar-menus .back-menu-item,
+  #sidebar-menus .card-tag-cloud a {
+    min-height: 44px;
+  }
+
+  #sidebar-menus .back-menu-item,
+  #sidebar-menus .card-tag-cloud a {
+    display: inline-flex;
+    align-items: center;
+  }
+
   #page-header #menus > .menus_items {
     background: transparent;
     border: 0;

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poblumi-shell-'
-const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-4`
+const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-5`
 const APP_SHELL = [
   '/',
   '/about/',
@@ -9,7 +9,7 @@ const APP_SHELL = [
   '/css/index.css?v=4.0.0',
   '/css/solitude-v4-compat.css',
   '/css/poblumi-brand.css?v=11',
-  '/css/apple-liquid-glass.css?v=35',
+  '/css/apple-liquid-glass.css?v=36',
   '/js/utils.js?v=4.0.0',
   '/js/main.js?v=4.0.0',
   '/js/solitude-v4-actions.js',
@@ -35,6 +35,9 @@ self.addEventListener('activate', event => {
           .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
           .map(key => caches.delete(key))
       ))
+      .then(() => self.registration.navigationPreload
+        ? self.registration.navigationPreload.enable()
+        : undefined)
       .then(() => self.clients.claim())
   )
 })
@@ -46,7 +49,8 @@ const cacheResponse = (request, response) => {
   return response
 }
 
-const networkFirstPage = request => fetch(request)
+const networkFirstPage = (request, preloadResponse) => Promise.resolve(preloadResponse)
+  .then(response => response || fetch(request))
   .then(response => cacheResponse(request, response))
   .catch(async () => {
     const exact = await caches.match(request, { ignoreSearch: true })
@@ -71,7 +75,7 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirstPage(request))
+    event.respondWith(networkFirstPage(request, event.preloadResponse))
     return
   }
 

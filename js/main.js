@@ -327,9 +327,11 @@ const initHomeCenter = () => {
       item.classList.toggle("active", isActive);
       item.setAttribute("aria-current", String(isActive));
     });
-    indicators.forEach((indicator, indicatorIndex) =>
-      indicator.classList.toggle("active", indicatorIndex === index)
-    );
+    indicators.forEach((indicator, indicatorIndex) => {
+      const isActive = indicatorIndex === index;
+      indicator.classList.toggle("active", isActive);
+      indicator.setAttribute("aria-current", String(isActive));
+    });
     const selected = banners[index];
     const selectedStyle = getComputedStyle(selected);
     const color = selectedStyle.getPropertyValue("--home-center-theme").trim();
@@ -379,7 +381,11 @@ const initHomeCenter = () => {
     indicator.addEventListener("click", (event) => {
       event.preventDefault();
       select(index);
-      banner.scrollTo({ left: banner.clientWidth * index, behavior: "smooth" });
+      const behavior = window.matchMedia("(prefers-reduced-motion: reduce)")
+        .matches
+        ? "auto"
+        : "smooth";
+      banner.scrollTo({ left: banner.clientWidth * index, behavior });
     });
   });
   banner.addEventListener("scroll", () => {
