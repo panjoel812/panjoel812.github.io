@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poblumi-shell-'
-const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-5`
+const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-6`
 const APP_SHELL = [
   '/',
   '/about/',
