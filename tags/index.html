@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>全部标签 | Poblumi · 啵露米</title><noscript>开启 JavaScript 后才能访问本站</noscript><link rel="icon" href="/img/poblumi-logo.png"><link rel="stylesheet" href="/css/index.css?v=4.0.0"><link rel="canonical" href="https://panjoel812.github.io/tags/index.html"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css"><meta name="description" content="Poblumi · 啵露米的知识博客，由 Panjoel 维护，分享数学、计算机科学、物理与技术实践。"><meta name="apple-mobile-web-app-capable" content="Poblumi · 啵露米"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="/img/poblumi-logo.png"><link rel="apple-touch-icon" href="/img/poblumi-logo.png" sizes="180x180"><script>console.log(" %c Solitude %c 4.0.0 %c https://github.com/everfu/hexo-theme-solitude","background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff","background:#ff9a9a ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff","background:unset ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff")</script><script>let mdate = "7-8,9-18,12-13";
+mdate = (mdate.split(","));
+let ndate = new Date();
+for (let i of mdate) {
+    if (i === (ndate.getMonth()+1) + "-" + (ndate.getDate())) {
+        document.documentElement.classList.add('memorial');
+    }
+}</script><script src="/js/solitude-v4-actions.js"></script><link rel="stylesheet" href="/css/solitude-v4-compat.css"><link rel="stylesheet" href="/css/twikoo-heo-clean.css?v=2"><link rel="stylesheet" href="/css/poblumi-brand.css?v=8"><link rel="stylesheet" href="/css/apple-liquid-glass.css?v=35"><script>(()=>{
+        const parseConfig = (id) => {
+            const element = document.getElementById(id)
+            if (!element) return {}
+            try {
+                return JSON.parse(element.content?.textContent || element.textContent || '{}')
+            } catch (error) {
+                console.error('Invalid Solitude config:', error)
+                return {}
+            }
+        }
+        const saveToLocal = {
+            set: function setWithExpiry(key, value, ttl) {
+                if (ttl === 0)
+                    return
+                const now = new Date()
+                const expiryDay = ttl * 86400000
+                const item = {
+                    value: value,
+                    expiry: now.getTime() + expiryDay
+                }
+                localStorage.setItem(key, JSON.stringify(item))
+            },
+            get: function getWithExpiry(key) {
+                const itemStr = localStorage.getItem(key)
+
+                if (!itemStr) {
+                    return undefined
+                }
+                let item
+                try {
+                    item = JSON.parse(itemStr)
+                } catch (error) {
+                    localStorage.removeItem(key)
+                    return undefined
+                }
+                const now = new Date()
+
+                if (now.getTime() > item.expiry) {
+                    localStorage.removeItem(key)
+                    return undefined
+                }
+                return item.value
+            }
+        };
+        const resourceRequests = new Map()
+        const loadResource = (url, create) => {
+            const absoluteUrl = new URL(url, document.baseURI).href
+            if (resourceRequests.has(absoluteUrl)) return resourceRequests.get(absoluteUrl)
+            const request = new Promise((resolve, reject) => {
+                const element = create(absoluteUrl)
+                element.addEventListener('load', () => resolve(element), {once: true})
+                element.addEventListener('error', () => {
+                    resourceRequests.delete(absoluteUrl)
+                    reject(new Error('Unable to load ' + absoluteUrl))
+                }, {once: true})
+                document.head.appendChild(element)
+            })
+            resourceRequests.set(absoluteUrl, request)
+            return request
+        }
+        const api = window.Solitude || {}
+        window.Solitude = api
+        api.installLegacyAdapter = () => {
+            const aliases = {
+                utils: api,
+                sco: api,
+                GLOBAL_CONFIG: api.config
+            }
+            Object.entries(aliases).forEach(([name, value]) => {
+                if (name in window) return
+                Object.defineProperty(window, name, {
+                    configurable: true,
+                    enumerable: false,
+                    value
+                })
+            })
+        }
+        Object.defineProperties(api, {
+            config: {configurable: true, get: () => parseConfig('site-config')},
+            page: {configurable: true, get: () => parseConfig('config-diff')}
+        })
+        Object.assign(api, {
+            saveToLocal: saveToLocal,
+            loadStyle: (url, options = {}) => loadResource(url, href => {
+                const link = document.createElement('link')
+                link.rel = 'stylesheet'
+                link.href = href
+                if (options.id) link.id = options.id
+                return link
+            }),
+            loadScript: (url, options = {}) => {
+              if (url.includes('barrage')) api.installLegacyAdapter()
+              return loadResource(url, src => {
+                const script = document.createElement('script')
+                script.src = src
+                script.async = options.async !== false
+                Object.entries(options.attributes || {}).forEach(([key, value]) => script.setAttribute(key, value))
+                return script
+              })
+            },
+            addGlobalFn: (key, fn, name = false, parent = window) => {
+                const globalFn = parent.globalFn || {}
+                const keyObj = globalFn[key] || {}
+
+                if (name && keyObj[name]) return
+
+                name = name || Object.keys(keyObj).length
+                keyObj[name] = fn
+                globalFn[key] = keyObj
+                parent.globalFn = globalFn
+            },
+            addEventListenerPjax: (ele, event, fn, option = false) => {
+              ele.addEventListener(event, fn, option)
+              api.addGlobalFn('pjax', () => {
+                  ele.removeEventListener(event, fn, option)
+              })
+            },
+            diffDateFormat: (selector) => {
+                selector.forEach(item => {
+                    const date = new Date(item.getAttribute('datetime') || item.textContent);
+                    item.textContent = (date.getMonth() + 1).toString()+'/'+date.getDate().toString();
+                });
+            },
+        })
+        api.getCSS = (url, id = false) => api.loadStyle(url, {id})
+        api.getScript = (url, attr = {}) => api.loadScript(url, {attributes: attr})
+        api.on = (name, handler) => {
+            const eventName = 'solitude:' + name
+            document.addEventListener(eventName, handler)
+            return () => document.removeEventListener(eventName, handler)
+        }
+        api.navigate = url => api.pjax?.loadUrl ? api.pjax.loadUrl(url) : window.location.assign(url)
+    })()</script><script>initTheme = () => {
+    let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const cachedMode = Solitude.saveToLocal.get('theme');
+    if (cachedMode === undefined) {
+        const nowMode =
+            isDarkMode ? 'dark' : 'light'
+        document.documentElement.setAttribute('data-theme', nowMode);
+    } else {
+        document.documentElement.setAttribute('data-theme', cachedMode);
+    }
+    Solitude.rightMenu?.mode(cachedMode === 'dark' && isDarkMode)
+}
+initTheme()</script><template id="site-config">{"root":"/","runtime":"2019-04-01 00:00:00","lazyload":{"enable":true,"error":"/img/error_load.webp"},"copyright":false,"highlight":{"limit":200,"expand":true,"copy":true,"syntax":"highlight.js"},"friend_links":{"async":false,"path":"/links.json","total":0,"placeholder":"/img/loading.gif","default_avatar":"/img/default_avatar.avif","more_url":"/links/","loading":"正在加载友链…","error":"友链加载失败，请稍后重试。","retry":"重新加载","random":"点击前往按钮进入随机一个友链，不保证跳转网站的安全性和可用性。本次随机到的是本站友链：⌈ ${name} ⌋","to":"前往","more":"更多","default_sort":"默认排序","random_sort":"随机排序","sort_label":"切换排序方式","scroll_left":"向左滚动","scroll_right":"向右滚动"},"random_posts":["25年浙江高考圆锥曲线/","25浙江高考导数/","前缀和-线段树-记忆化搜索/","[NOI1995]石子合并——题解/","从零开始使用Hexo的说明指南/","建系简单知识汇总/","丢弃Excel，Pandas一行搞定/","TinyDB-一个纯Python编写的轻量级数据库/","Python装饰器/","网站性能优化的一些小技巧/","Python-正则表达式一文通/","两万字长文让你彻底掌握-celery/","HarmonyOS 字体/","二次函数专题3/","二次函数专题2/","二次函数专题1/","压位-Trie-学习笔记/","ETT(Euler Tour Tree)学习笔记/","有限微积分与数列求和/","反比例函数/","毕氏树/","正弦定理/","共边定理/","并查集/","三角形的内切圆/","数学定理大全/","异或/","容斥原理/","线性筛/","树状数组/","倍增/","幂/","列表/","基本运算符/","集合/","zip-迭代/","海龟画图/","元组/","字典/","字符串/","初中数学知识点-角平分线/","初中数学知识点-等腰三角形/","初中数学知识点-等边三角形/","初中数学知识点-直角三角形/","初中数学知识点-等腰直角三角形/"],"randomlink":false,"feature_modules":{"search":false,"post_ai":false,"friend_links":false,"music":true,"right_menu":true,"translate":false,"covercolor":"api"},"lang":{"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已开启，请遵守 GPL 协议。","totalk":"无需删除空行，直接输入评论即可"},"aside":{"state":{"morning":"一日之计在于晨","noon":"吃饱了才有力气干活","afternoon":"集中精力，攻克难关","night":"不要太劳累了，早睡更健康","goodnight":"睡个好觉，保证精力充沛"},"witty_words":[],"witty_comment":{"prefix":"好久不见，","back":"欢迎回来，"}},"covercolor":{"enable":true,"mode":"api","api":"https://api.nsmao.net/api/img2color/query?key=HA7ynsiD1zdYSTxMTZruhjODcq&img=","time":43200000},"comment":false,"lightbox":null,"right_menu":{"mode":{"dark":"深色模式","light":"浅色模式"},"img_error":"此图片无法复制与下载","music":{"start":"播放音乐","stop":"暂停音乐"}},"translate":false,"lure":false,"expire":false}</template><template id="config-diff">{"is_post":false,"is_page":true,"is_home":false,"page":"tags","toc":false,"comment":false,"ai_text":false,"color":false}</template><meta name="generator" content="Hexo 7.3.0"></head><body id="body" data-type="tags"><div><canvas id="universe"></canvas></div><div><div id="console"><div class="console-content"><div class="console-card-group" data-solitude-action="onConsoleCardGroupClick" data-solitude-event="true"><div class="console-card-group-right"><div class="console-card tags" data-solitude-action="hideConsole"><div class="card-content"><div class="author-content-item-tips">标签</div><div class="author-content-item-title">探索感兴趣的内容</div></div><div class="card-tag-cloud"><a href="/tags/math/">math<sup>25</sup></a><a href="/tags/c/">c++<sup>8</sup></a><a href="/tags/tools/">tools<sup>1</sup></a><a href="/tags/python/">python<sup>14</sup></a><a href="/tags/geogebra/">geogebra<sup>3</sup></a><a href="/tags/hexo/">hexo<sup>1</sup></a></div></div><div class="console-card history" data-solitude-action="hideConsole"><ul class="card-archive-list"><li class="item"><a href="/archives/2025/06/"><span class="date">2025/06</span><div class="count-group"><span class="count">2</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2024/06/"><span class="date">2024/06</span><div class="count-group"><span class="count">1</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2023/06/"><span class="date">2023/06</span><div class="count-group"><span class="count">2</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2023/01/"><span class="date">2023/01</span><div class="count-group"><span class="count">1</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2022/12/"><span class="date">2022/12</span><div class="count-group"><span class="count">5</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2022/09/"><span class="date">2022/09</span><div class="count-group"><span class="count">1</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2022/08/"><span class="date">2022/08</span><div class="count-group"><span class="count">1</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2022/07/"><span class="date">2022/07</span><div class="count-group"><span class="count">6</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2022/06/"><span class="date">2022/06</span><div class="count-group"><span class="count">4</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/2022/05/"><span class="date">2022/05</span><div class="count-group"><span class="count">22</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/"><span class="date">全部文章</span><div class="count-group"><span class="count">45</span><span class="unit">篇</span></div></a></li></ul></div></div></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" data-solitude-action="toggleTheme" title="昼夜切换" heotip="昼夜切换"><i class="solitude fas fa-circle-half-stroke"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" data-solitude-action="switchHideAside" title="侧边栏显示" heotip="侧边栏显示"><i class="solitude fas fa-arrows-left-right-to-line"></i></span></div><div class="console-btn-item" id="consoleKeyboard" data-solitude-action="switchKeyboard"><span class="keyboardSwitch" title="键盘快捷键" heotip="键盘快捷键"><i class="solitude fas fa-keyboard"></i></span></div><div class="console-btn-item" id="consoleMusic" data-solitude-action="musicToggle"><span class="music-switch" title="音乐开关" heotip="音乐开关"><i class="solitude fas fa-compact-disc"></i></span></div></div></div><div class="console-mask" data-solitude-action="hideConsole"></div></div></div><div id="sidebar" style="zoom:1"><div id="menu-mask" style="display:none"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">45</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" data-solitude-action="toggleTheme"><i class="solitude fas fa-circle-half-stroke"></i><span>显示模式</span></span></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://panjoel.github.io/" title="Github" heotip="Github"><img class="nolazyload back-menu-item-icon" src="/img/pwa/poblumi-logo-64.png" alt="Github"><span class="back-menu-item-text">Github</span></a><a class="back-menu-item" target="_blank" rel="noopener" href="https://panjoel.pages.dev/" title="Cloudflare" heotip="Cloudflare"><img class="nolazyload back-menu-item-icon" src="/img/pwa/poblumi-logo-64.png" alt="Cloudflare"><span class="back-menu-item-text">Cloudflare</span></a><a class="back-menu-item" target="_blank" rel="noopener" href="https://panjoel.netlify.app/" title="Netlify" heotip="Netlify"><img class="nolazyload back-menu-item-icon" src="/img/pwa/poblumi-logo-64.png" alt="Netlify"><span class="back-menu-item-text">Netlify</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="文库" heotip="文库"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/" title="文章列表" heotip="文章列表"><i class="solitude fas fa-folder-closed"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/" title="全部分类" heotip="全部分类"><i class="solitude fas fa-clone"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/" title="全部标签" heotip="全部标签"><i class="solitude fas fa-tags"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="友链" heotip="友链"><span>友链</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/moments/" title="友链鱼塘" heotip="友链鱼塘"><i class="solitude fas fa-wifi"></i><span>友链鱼塘</span></a></li><li><a class="site-page child" href="/links/" title="友情链接" heotip="友情链接"><i class="solitude fas fa-user-group"></i><span>友情链接</span></a></li><li><a class="site-page child" href="javascript:void(0);" data-solitude-action="travelling" data-solitude-prevent="true" title="宝藏博主" heotip="宝藏博主"><i class="solitude fas fa-gift"></i><span>宝藏博主</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="我的" heotip="我的"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/" title="装备" heotip="装备"><i class="solitude fas fa-laptop"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/" title="工具箱" heotip="工具箱"><i class="solitude fas fa-toolbox"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/" title="音乐馆" heotip="音乐馆"><i class="solitude fas fa-compact-disc"></i><span>音乐馆</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="关于" heotip="关于"><span>关于</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/" title="关于本站" heotip="关于本站"><i class="solitude fas fa-user"></i><span>关于本站</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="card-tag-cloud"><a href="/tags/math/">math<sup>25</sup></a><a href="/tags/c/">c++<sup>8</sup></a><a href="/tags/tools/">tools<sup>1</sup></a><a href="/tags/python/">python<sup>14</sup></a><a href="/tags/geogebra/">geogebra<sup>3</sup></a><a href="/tags/hexo/">hexo<sup>1</sup></a></div></div></div></div><div><div id="keyboard-tips"><div class="keyboardTitle">博客快捷键</div><div class="keyboardList"><div class="keyboardItem"><div class="keyGroup"><div class="key">Shift</div><div class="key">K</div></div><div class="keyContent"><div class="content">关闭快捷键功能</div></div></div><div class="keyboardItem"><div class="keyGroup"><div class="key">Shift</div><div class="key">A</div></div><div class="keyContent"><div class="content">打开中控台</div></div></div><div class="keyboardItem"><div class="keyGroup"><div class="key">Shift</div><div class="key">M</div></div><div class="keyContent"><div class="content">播放/暂停音乐</div></div></div><div class="keyboardItem"><div class="keyGroup"><div class="key">Shift</div><div class="key">L</div></div><div class="keyContent"><div class="content">打开友情链接</div></div></div></div></div><script>const keyboard_addKeyup = (e) => {
+    if (e.key === 'Shift') {
+        document.getElementById('keyboard-tips').classList.remove('show');
+    }
+}
+
+const keyboard_addKeydown = (e) => {
+    const keyboards = [{"name":"关闭快捷键功能","key":"K","sco":"switchKeyboard"},{"name":"打开中控台","key":"A","sco":"toggleConsole"},{"name":"播放/暂停音乐","key":"M","sco":"musicToggle"},{"name":"打开友情链接","key":"L","url":"/links/"}];
+    if (e.key === 'Shift') {
+        document.getElementById('keyboard-tips').classList.add('show');
+    }
+
+    for (let i = 0; i < keyboards.length; i++) {
+        if (keyboards[i].url) {
+            if (keyboards[i].url.startsWith('http')) {
+                if (e.key === keyboards[i].key) {
+                    window.open(keyboards[i].url);
+                }
+            } else {
+                if (e.key === keyboards[i].key) {
+                    Solitude.navigate(keyboards[i].url);
+                }
+            }
+        } else if (keyboards[i].sco) {
+            if (e.key === keyboards[i].key) {
+                Solitude[keyboards[i].sco]?.();
+            }
+        } else if (keyboards[i].func) {
+            if (e.key === keyboards[i].key) {
+                window[keyboards[i].func]();
+            }
+        }
+    }
+}
+
+function openKeyboard() {
+
+    window.addEventListener('keyup', keyboard_addKeyup);
+
+    window.addEventListener('keydown', keyboard_addKeydown);
+}
+function closeKeyboard() {
+
+    window.removeEventListener('keyup', keyboard_addKeyup);
+
+    window.removeEventListener('keydown', keyboard_addKeydown);
+}
+
+var sco_keyboards = localStorage.getItem('keyboard') === 'true'
+if (sco_keyboards) {
+    openKeyboard();
+    let keyboard = document.getElementById('consoleKeyboard');
+    keyboard?.classList.add('on');
+}</script></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav class="show" id="nav" data-solitude-action="onNavBlankClickCloseConsole" data-solitude-event="true"><div id="nav-group"><div id="blog_name"><div class="back-home-button" tabindex="-1"><i class="solitude fas fa-bars-progress"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://panjoel.github.io/" title="Github" heotip="Github"><img class="nolazyload back-menu-item-icon" src="/img/pwa/poblumi-logo-64.png" alt="Github"><span class="back-menu-item-text">Github</span></a><a class="back-menu-item" target="_blank" rel="noopener" href="https://panjoel.pages.dev/" title="Cloudflare" heotip="Cloudflare"><img class="nolazyload back-menu-item-icon" src="/img/pwa/poblumi-logo-64.png" alt="Cloudflare"><span class="back-menu-item-text">Cloudflare</span></a><a class="back-menu-item" target="_blank" rel="noopener" href="https://panjoel.netlify.app/" title="Netlify" heotip="Netlify"><img class="nolazyload back-menu-item-icon" src="/img/pwa/poblumi-logo-64.png" alt="Netlify"><span class="back-menu-item-text">Netlify</span></a></div></div></div></div><a href="/" title="返回博客主页" id="site-name" heotip="返回博客主页"><span class="title">Poblumi</span><i class="solitude fas fa-home"></i></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" data-solitude-action="toTop" title="返回顶部" heotip="返回顶部">全部标签</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="文库" heotip="文库"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/" title="文章列表" heotip="文章列表"><i class="solitude fas fa-folder-closed"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/" title="全部分类" heotip="全部分类"><i class="solitude fas fa-clone"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/" title="全部标签" heotip="全部标签"><i class="solitude fas fa-tags"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="友链" heotip="友链"><span>友链</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/moments/" title="友链鱼塘" heotip="友链鱼塘"><i class="solitude fas fa-wifi"></i><span>友链鱼塘</span></a></li><li><a class="site-page child" href="/links/" title="友情链接" heotip="友情链接"><i class="solitude fas fa-user-group"></i><span>友情链接</span></a></li><li><a class="site-page child" href="javascript:void(0);" data-solitude-action="travelling" data-solitude-prevent="true" title="宝藏博主" heotip="宝藏博主"><i class="solitude fas fa-gift"></i><span>宝藏博主</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="我的" heotip="我的"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/" title="装备" heotip="装备"><i class="solitude fas fa-laptop"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/" title="工具箱" heotip="工具箱"><i class="solitude fas fa-toolbox"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/" title="音乐馆" heotip="音乐馆"><i class="solitude fas fa-compact-disc"></i><span>音乐馆</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" title="关于" heotip="关于"><span>关于</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/" title="关于本站" heotip="关于本站"><i class="solitude fas fa-user"></i><span>关于本站</span></a></li></ul></div></div></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" data-solitude-action="randomPost" data-solitude-prevent="true" title="随机一篇文章" heotip="随机一篇文章" href="javascript:void(0);"><i class="solitude fas fa-dice-d6"></i></a></div><div class="nav-button" id="nav-console"><a class="console_switchbutton" data-solitude-action="toggleConsole" data-solitude-prevent="true" title="中控台" heotip="中控台" href="javascript:void(0);"><label><i class="left"></i><i class="center"></i><i class="right"></i></label></a></div><div class="nav-button" id="nav-totop" data-solitude-action="toTop" title="返回顶部" heotip="返回顶部"><a class="totopbtn"><i class="solitude fas fa-arrow-up"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude fas fa-bars"></i></a></div></div></div></nav></header><main class="layout hide-aside" id="content-inner"><div id="page"><h1 class="page-title">标签</h1><div class="category-lists"><div class="tag-cloud-list is-center"><a href="/tags/math/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>math<span class="tagsPageCount">25</span></span></a><a href="/tags/c/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>c++<span class="tagsPageCount">8</span></span></a><a href="/tags/tools/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>tools<span class="tagsPageCount">1</span></span></a><a href="/tags/python/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>python<span class="tagsPageCount">14</span></span></a><a href="/tags/geogebra/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>geogebra<span class="tagsPageCount">3</span></span></a><a href="/tags/hexo/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>hexo<span class="tagsPageCount">1</span></span></a></div></div></div><style>.layout>div:first-child{width:100%}</style></main><footer id="footer"><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2019 - 2026 By<a class="footer-bar-link" href="/" title="Poblumi · 啵露米">Poblumi · 啵露米</a></div><div class="beian-group"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://hexo.io/" title="框架：Hexo" heotip="框架：Hexo">框架：Hexo</a><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/everfu/hexo-theme-solitude" title="主题：Solitude" heotip="主题：Solitude">主题：Solitude</a></div></div><div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/everfu/hexo-theme-solitude" title="主题" heotip="主题">主题</a></div></div></div></div><div class="comment-barrage needEndHide"></div></footer></div><div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="solitude fas fa-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="solitude fas fa-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="solitude fas fa-arrows-rotate"></i></div><div class="rightMenu-item" id="menu-top"><i class="solitude fas fa-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext" title="复制选中文字" heotip="复制选中文字"><i class="solitude fas fa-clone"></i><span>复制选中文字</span></div><div class="rightMenu-item" id="menu-pastetext" title="粘贴文字" heotip="粘贴文字"><i class="solitude fas fa-clipboard"></i><span>粘贴文字</span></div><div class="rightMenu-item" id="menu-commenttext" title="引用到评论" heotip="引用到评论"><i class="solitude fas fa-comment-medical"></i><span>引用到评论</span></div><div class="rightMenu-item" id="menu-newwindow" title="在新窗口打开" heotip="在新窗口打开"><i class="solitude far fa-window-maximize"></i><span>在新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink" title="复制链接地址" heotip="复制链接地址"><i class="solitude fas fa-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg" title="复制此图片" heotip="复制此图片"><i class="solitude fas fa-clone"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg" title="下载此图片" heotip="下载此图片"><i class="solitude fas fa-cloud-arrow-down"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-music-toggle" title="播放音乐" heotip="播放音乐"><i class="solitude fas fa-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back" title="切换到上一首" heotip="切换到上一首"><i class="solitude fas fa-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward" title="切换到下一首" heotip="切换到下一首"><i class="solitude fas fa-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-copyMusicName" title="复制歌名" heotip="复制歌名"><i class="solitude fas fa-clone"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-randomPost" data-solitude-action="runConfiguredAction" data-solitude-value="Solitude.randomPost()" title="随机短文" heotip="随机短文"><i class="solitude fas fa-tower-broadcast"></i><span>随机短文</span></div><div class="rightMenu-item" data-solitude-action="runConfiguredAction" data-solitude-value="Solitude.navigate('/categories/')" title="全部分类" heotip="全部分类"><i class="solitude fas fa-clone"></i><span>全部分类</span></div><div class="rightMenu-item" data-solitude-action="runConfiguredAction" data-solitude-value="Solitude.navigate('/tags/')" title="全部标签" heotip="全部标签"><i class="solitude fas fa-tags"></i><span>全部标签</span></div><div class="rightMenu-item" data-solitude-action="runConfiguredAction" data-solitude-value="Solitude.openSponsor()" title="赞助博主" heotip="赞助博主"><i class="solitude fas fa-heart"></i><span>赞助博主</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-darkmode" data-solitude-action="switchDarkMode"><i class="solitude fas fa-circle-half-stroke"></i><span class="menu-darkmode-text" title="深色模式" heotip="深色模式">深色模式</span></div></div></div><div id="rightmenu-mask"></div></div><div><script src="/js/utils.js?v=4.0.0"></script><script defer src="/js/third_party/waterfall.min.js?v=4.0.0"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script defer src="/js/third_party/universe.min.js?v=4.0.0"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  if (typeof dark === 'function') dark();
+});</script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><script>var meting_api="https://meting.qjqq.cn/?server=:server&type=:type&id=:id&auth=:auth&r=:r"</script><script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/meting@2.0.2/dist/Meting.min.js"></script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+Solitude.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')</script><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><script type="module" src="/js/main.js?v=4.0.0"></script><script src="/js/poblumi-brand.js?v=1"></script><script src="/js/twikoo-heo-clean.js?v=3"></script><script src="/js/apple-liquid-glass.js?v=9"></script><div class="js-pjax"></div></div><script>function initPjax() {
+    if (typeof Pjax === 'undefined') {
+        setTimeout(initPjax, 100);
+        return;
+    }
+
+    const instance = new Pjax({
+        elements: 'a:not([target="_blank"])',
+        selectors: ["title","#body-wrap","#site-config","meta[name=\"description\"]",".js-pjax","meta[property^=\"og:\"]","#config-diff",".rs_show",".rs_hide"],
+        cacheBust: false,
+        analytics: false,
+        scrollRestoration: false
+    })
+
+    Solitude.pjax = instance;
+
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+        const newScript = document.createElement('script')
+        const content = item.text || item.textContent || item.innerHTML || ""
+        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+        newScript.appendChild(document.createTextNode(content))
+        item.parentNode.replaceChild(newScript, item)
+    })
+
+    document.addEventListener('pjax:send', () => {
+        document.dispatchEvent(new CustomEvent('solitude:beforeNavigate'))
+        Solitude.disposePage?.()
+        Object.values(window.globalFn?.pjax || {}).forEach(dispose => dispose())
+        if (window.globalFn) window.globalFn.pjax = {}
+    })
+
+    document.addEventListener('pjax:complete', async () => {
+        await Solitude.refresh()
+
+        document.querySelectorAll('script[data-pjax]').forEach(item => {
+            const newScript = document.createElement('script')
+            const content = item.text || item.textContent || item.innerHTML || ""
+            Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+            newScript.appendChild(document.createTextNode(content))
+            item.parentNode.replaceChild(newScript, item)
+        })
+
+        Solitude.config.lazyload.enable && window.lazyLoadInstance?.update()
+        document.dispatchEvent(new CustomEvent('solitude:afterNavigate', {
+            detail: {page: Solitude.page}
+        }))
+
+    })
+
+    document.addEventListener('pjax:error', (e) => {
+        if (e.request.status === 404) {
+            Solitude.navigate('/404.html')
+        }
+    })
+}
+
+// 初始化 Pjax
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPjax);
+} else {
+    initPjax();
+}</script><div><div class="needEndHide" id="nav-music" data-solitude-action="handleMusicClick" data-solitude-event="true"><div id="nav-music-hoverTips"><button class="music-control-btn" id="music-prev" type="button" title="切换到上一首" aria-label="切换到上一首" data-solitude-action="musicSkipBack" data-solitude-stop="true"><i class="fas fa-backward-step"></i></button><button class="music-control-btn" id="music-pause" type="button" title="暂停音乐" aria-label="暂停音乐" data-solitude-action="musicToggle" data-solitude-stop="true"><i class="fas fa-pause"></i></button><button class="music-control-btn" id="music-play" type="button" title="播放音乐" aria-label="播放音乐" data-solitude-action="musicToggle" data-solitude-stop="true"><i class="fas fa-play"></i></button><button class="music-control-btn" id="music-next" type="button" title="切换到下一首" aria-label="切换到下一首" data-solitude-action="musicSkipForward" data-solitude-stop="true"><i class="fas fa-forward-step"></i></button></div><meting-js id="8226579670" server="netease" type="playlist" mutex="true" preload="none" theme="var(--efu-main)" data-lrctype="0" order="random" volume="0.8"></meting-js></div></div></body></html>
