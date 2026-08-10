@@ -115,19 +115,81 @@
     })
   }
 
+  const cleanHeadingText = heading => {
+    if (!heading) return ''
+
+    const copy = heading.cloneNode(true)
+    copy.querySelectorAll('a.headerlink, .katex-mathml, script, style').forEach(element => element.remove())
+    const text = copy.textContent.trim().replace(/\s+/g, ' ')
+    const characters = [...text]
+    return characters.length > 96 ? `${characters.slice(0, 95).join('')}…` : text
+  }
+
   const prepareHeadingAnchors = () => {
     document.querySelectorAll('#post .article-container a.headerlink').forEach(anchor => {
       if (anchor.getAttribute('aria-label')) return
 
       const heading = anchor.closest('h1, h2, h3, h4, h5, h6')
-      const headingText = heading?.textContent?.trim().replace(/\s+/g, ' ')
+      const headingText = cleanHeadingText(heading)
       anchor.setAttribute('aria-label', headingText ? `定位到“${headingText}”` : '定位到本节')
+    })
+  }
+
+  const prepareHomeCenterAccessibility = () => {
+    const home = document.getElementById('home_center')
+    if (!home) return
+
+    const banners = [...home.querySelectorAll('.home-center-banner-item')]
+    const indicators = [...home.querySelectorAll('.home-center-indicator')]
+    const title = home.querySelector('.home-center-title')
+    const bannerGroup = home.querySelector('.home-center-banner')
+
+    bannerGroup?.setAttribute('aria-label', '推荐内容')
+    title?.setAttribute('aria-live', 'polite')
+    title?.setAttribute('aria-atomic', 'true')
+
+    banners.forEach(banner => {
+      const itemTitle = banner.dataset.title?.trim()
+      if (itemTitle) banner.setAttribute('aria-label', `查看推荐：${itemTitle}`)
+      const cover = banner.querySelector('.home-center-cover-img')
+      if (cover) {
+        cover.alt = ''
+        cover.setAttribute('aria-hidden', 'true')
+      }
+    })
+
+    document.querySelectorAll('.back-menu-item-icon').forEach(icon => {
+      icon.alt = ''
+      icon.setAttribute('aria-hidden', 'true')
+      icon.width ||= 24
+      icon.height ||= 24
+    })
+
+    indicators.forEach((indicator, index) => {
+      const itemTitle = banners[index]?.dataset.title?.trim()
+      if (itemTitle) indicator.setAttribute('aria-label', `查看推荐：${itemTitle}`)
+      if (indicator.dataset.poblumiCarouselReady === 'true') return
+
+      indicator.dataset.poblumiCarouselReady = 'true'
+      indicator.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+
+        event.preventDefault()
+        let targetIndex = index
+        if (event.key === 'Home') targetIndex = 0
+        else if (event.key === 'End') targetIndex = indicators.length - 1
+        else targetIndex = (index + (event.key === 'ArrowRight' ? 1 : -1) + indicators.length) % indicators.length
+
+        indicators[targetIndex]?.click()
+        indicators[targetIndex]?.focus({ preventScroll: true })
+      })
     })
   }
 
   const prepareDynamicAccessibility = () => {
     makeKeyboardAccessible()
     prepareHeadingAnchors()
+    prepareHomeCenterAccessibility()
 
     if (document.body.dataset.poblumiDynamicA11yReady === 'true') return
     document.body.dataset.poblumiDynamicA11yReady = 'true'
@@ -139,6 +201,7 @@
         frame = 0
         makeKeyboardAccessible()
         prepareHeadingAnchors()
+        prepareHomeCenterAccessibility()
       })
     })
     observer.observe(document.body, { childList: true, subtree: true })

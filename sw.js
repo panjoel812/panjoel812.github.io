@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poblumi-shell-'
-const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-13`
+const CACHE_NAME = `${CACHE_PREFIX}2026-08-10-15`
 const APP_SHELL = [
   '/',
   '/about/',
@@ -9,12 +9,12 @@ const APP_SHELL = [
   '/css/index.css?v=4.0.0',
   '/css/solitude-v4-compat.css',
   '/css/poblumi-brand.css?v=11',
-  '/css/apple-liquid-glass.css?v=41',
+  '/css/apple-liquid-glass.css?v=43',
   '/js/utils.js?v=4.0.0',
   '/js/main.js?v=4.0.0',
   '/js/solitude-v4-actions.js',
   '/js/pwa-register.js?v=3',
-  '/js/poblumi-brand.js?v=12',
+  '/js/poblumi-brand.js?v=13',
   '/img/pwa/poblumi-logo-192.png',
   '/img/poblumi-pack/blog-badge.webp',
   '/img/poblumi-pack/cover-character.webp'
