@@ -1496,6 +1496,12 @@ html.pan-nav-menu-hover .custom-tooltip {
   opacity: .72;
 }
 
+#post .article-container a.headerlink:focus-visible,
+.aplayer .aplayer-icon:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--pan-accent) 54%, transparent);
+  outline-offset: 2px;
+}
+
 #post .article-container .footnotes {
   width: min(100%, var(--pan-reading-measure));
   margin: 2.75rem auto 0;
@@ -1676,6 +1682,28 @@ html.pan-nav-menu-hover .custom-tooltip {
   top: .5rem;
   right: .5rem;
   z-index: 2;
+}
+
+#post .post-reward .reward-button {
+  min-height: 44px;
+}
+
+.aplayer .aplayer-time .aplayer-icon,
+.aplayer .aplayer-miniswitcher .aplayer-icon {
+  min-width: 44px;
+  min-height: 44px;
+  place-items: center;
+  touch-action: manipulation;
+}
+
+.aplayer .aplayer-time .aplayer-icon-play {
+  min-width: 56px;
+  min-height: 56px;
+}
+
+.aplayer span.aplayer-icon.poblumi-keyboard-target {
+  display: inline-grid;
+  cursor: pointer;
 }
 
 #post .post-tools .post-tools-left .post-reward .reward-main .reward-all {
@@ -2341,6 +2369,12 @@ html.pan-nav-menu-hover .custom-tooltip {
   #sidebar-menus .site-data .data-item-link a {
     min-width: 44px;
     justify-content: center;
+  }
+
+  #post .post-reward .reward-button,
+  #twikoo .pan-tk-ai-tool,
+  #twikoo .pan-tk-anon-button {
+    min-height: 44px !important;
   }
 
   #sidebar-menus .menus_item > .site-page {

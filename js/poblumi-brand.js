@@ -76,23 +76,32 @@
     ['#page-name-text', 'button', '返回顶部'],
     ['#toggle-menu > a', 'button', '打开导航菜单'],
     ['.post-reward .reward-button', 'button', '显示赞赏方式'],
-    ['#toPageButton', 'button', '跳转到指定页']
+    ['#toPageButton', 'button', '跳转到指定页'],
+    ['.aplayer-icon-back', 'button', '上一首'],
+    ['.aplayer-icon-play', 'button', '播放或暂停'],
+    ['.aplayer-icon-forward', 'button', '下一首'],
+    ['.aplayer-icon-volume-down', 'button', '静音或恢复声音'],
+    ['.aplayer-icon-order', 'button', '切换播放顺序'],
+    ['.aplayer-icon-loop', 'button', '切换循环模式'],
+    ['.aplayer-icon-menu', 'button', '打开播放列表'],
+    ['.aplayer-icon-lrc', 'button', '显示或隐藏歌词'],
+    ['.aplayer-miniswitcher .aplayer-icon', 'button', '收起或展开播放器']
   ]
 
   const makeKeyboardAccessible = () => {
     keyboardTargets.forEach(([selector, role, fallbackLabel]) => {
       document.querySelectorAll(selector).forEach(element => {
-        if (element.matches('a[href], button, input, select, textarea')) return
-
-        element.setAttribute('role', role)
-        element.setAttribute('tabindex', '0')
-        element.classList.add('poblumi-keyboard-target')
-
         if (!element.getAttribute('aria-label')) {
           const title = element.getAttribute('title') || element.getAttribute('heotip')
           const articleTitle = element.querySelector('.article-title, .recent-post-info .article-title')?.textContent
           element.setAttribute('aria-label', (title || articleTitle || fallbackLabel).trim())
         }
+
+        if (element.matches('a[href], button, input, select, textarea')) return
+
+        element.setAttribute('role', role)
+        element.setAttribute('tabindex', '0')
+        element.classList.add('poblumi-keyboard-target')
 
         if (element.dataset.poblumiKeyboardReady === 'true') return
         element.dataset.poblumiKeyboardReady = 'true'
@@ -104,6 +113,35 @@
         })
       })
     })
+  }
+
+  const prepareHeadingAnchors = () => {
+    document.querySelectorAll('#post .article-container a.headerlink').forEach(anchor => {
+      if (anchor.getAttribute('aria-label')) return
+
+      const heading = anchor.closest('h1, h2, h3, h4, h5, h6')
+      const headingText = heading?.textContent?.trim().replace(/\s+/g, ' ')
+      anchor.setAttribute('aria-label', headingText ? `定位到“${headingText}”` : '定位到本节')
+    })
+  }
+
+  const prepareDynamicAccessibility = () => {
+    makeKeyboardAccessible()
+    prepareHeadingAnchors()
+
+    if (document.body.dataset.poblumiDynamicA11yReady === 'true') return
+    document.body.dataset.poblumiDynamicA11yReady = 'true'
+
+    let frame = 0
+    const observer = new MutationObserver(() => {
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        makeKeyboardAccessible()
+        prepareHeadingAnchors()
+      })
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
   }
 
   const prepareDesktopNavMenus = () => {
@@ -439,7 +477,7 @@
   const scheduleBrandGreeting = () => {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       applyBrandGreeting()
-      makeKeyboardAccessible()
+      prepareDynamicAccessibility()
       prepareDesktopNavMenus()
       prepareKeyboardShortcutGuard()
       prepareConsoleDialog()
